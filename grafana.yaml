@@ -12,7 +12,7 @@ parameters:
 - name: IMAGE_GRAFANA
   displayName: Grafana Image
   description: The location of the grafana image
-  value: wkulhanek/grafana:latest
+  value: jtomasg/grafana:latest
   required: true
 - name: VOLUME_CAPACITY
   displayName: Volume Capacity
@@ -122,6 +122,9 @@ objects:
         - name: grafana-log-volume
           persistentVolumeClaim:
             claimName: grafana-log-pvc
+        - name: grafana-plugins-volume
+          persistentVolumeClaim:
+            claimName: grafana-plugins-pvc
 
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -129,7 +132,7 @@ objects:
     name: grafana-lib-pvc
   spec:
     accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
     resources:
       requests:
         storage: "${VOLUME_CAPACITY}"
@@ -140,7 +143,18 @@ objects:
     name: grafana-log-pvc
   spec:
     accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: "${VOLUME_CAPACITY}"
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: grafana-plugins-pvc
+  spec:
+    accessModes:
+    - ReadWriteOnce
     resources:
       requests:
         storage: "${VOLUME_CAPACITY}"

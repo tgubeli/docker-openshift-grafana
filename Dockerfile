@@ -1,13 +1,13 @@
 FROM docker.io/centos:7
-LABEL maintainer="Wolfgang Kulhanek <WolfgangKulhanek@gmail.com>"
-ARG GRAFANA_VERSION=5.4.4
+LABEL maintainer="Tomás Gübeli <jtomasg@gmail.com>"
+ARG GRAFANA_VERSION=6.7.1
 
 LABEL name="Grafana" \
       io.k8s.display-name="Grafana" \
-      io.k8s.description="Grafana Dashboard for use with Prometheus." \
+      io.k8s.description="Grafana Dashboard" \
       io.openshift.expose-services="3000" \
       io.openshift.tags="grafana" \
-      build-date="2019-04-30" \
+      build-date="2020-03-20" \
       version=$GRAFANA_VERSION \
       release="1"
 
@@ -30,6 +30,14 @@ RUN /usr/bin/fix-permissions /var/log/grafana && \
     /usr/bin/fix-permissions /usr/sbin/grafana-server
 
 VOLUME ["/var/lib/grafana", "/var/log/grafana", "/etc/grafana"]
+
+# Plugins
+RUN curl -L -o /tmp/grafana-worldmap-panel.zip https://grafana.com/api/plugins/grafana-worldmap-panel/versions/0.2.1/download && \
+    unzip /tmp/grafana-worldmap-panel.zip -d /var/lib/grafana/plugins && \
+    curl -L -o /tmp/simPod-grafana-json-datasource-v0.1.7-0.zip https://grafana.com/api/plugins/simpod-json-datasource/versions/0.1.7/download && \
+    unzip /tmp/simPod-grafana-json-datasource-v0.1.7-0.zip -d /var/lib/grafana/plugins && \
+    rm /tmp/simPod-grafana-json-datasource-v0.1.7-0.zip && \
+    rm /tmp/grafana-worldmap-panel.zip
 
 EXPOSE 3000
 
